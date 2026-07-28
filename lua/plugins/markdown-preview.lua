@@ -39,10 +39,8 @@ return {
           if vim.fn.isdirectory(font_src) == 1 then
             local plugin_static = vim.fn.stdpath("data") .. "/lazy/markdown-preview.nvim/app/_static"
             local font_link = plugin_static .. "/font"
-            local ftype = vim.fn.getftype(font_link)
-            if ftype ~= "link" then
-              vim.fn.system("ln -sf " .. vim.fn.shellescape(font_src) .. " " .. vim.fn.shellescape(font_link))
-            end
+            -- 始终强制更新符号链接，防止 cwd 改变后指向旧目录
+            vim.fn.system("ln -sfn " .. vim.fn.shellescape(font_src) .. " " .. vim.fn.shellescape(font_link))
           end
         else
           vim.g.mkdp_markdown_css = ""
