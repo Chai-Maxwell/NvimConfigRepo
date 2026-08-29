@@ -83,6 +83,10 @@ return {
             org_agenda = { "<prefix>a", desc = "󰲠 Org Agenda" },
             org_capture = { "<prefix>c", desc = "󰲠 Org Capture" },
           },
+          org = {
+            -- 默认 <C-Space> 与输入法切换冲突，改为 <Leader>ob
+            org_toggle_checkbox = "<leader>ob",
+          },
         },
       })
 

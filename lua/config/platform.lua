@@ -20,14 +20,14 @@ function M.open_file(path)
 end
 
 ---用文件管理器打开目录
----macOS: Finder, Linux: Dolphin
+---macOS: Finder, Linux: xdg-open（自动调用默认文件管理器）
 ---@param path string 目录路径
 ---@return string[] 命令和参数列表
 function M.open_folder(path)
   if M.is_mac then
     return { "open", path }
   else
-    return { "dolphin", path }
+    return { "xdg-open", path }
   end
 end
 
