@@ -77,24 +77,28 @@ return {
         mkit = { typographer = false },
       }
 
-      -- ===== 预览页在 niri 当前列新开浏览器窗口 =====
-      --
-      -- 默认行为：server 用 xdg-open 打开 URL → firefox 复用已有实例，
-      -- 在其他 row 的 firefox 里开新标签页，并把 niri 焦点拉过去。
-      -- 这里改为强制 --new-window：firefox 新建窗口 → niri 在当前聚焦列
-      -- 新增一行（即当前 row 区域），不再跳转到其他 row。
+      -- ===== 按操作系统打开预览浏览器（Linux + Firefox / macOS + Safari） =====
       --
       -- 【原理】server.js 读取 g:mkdp_browserfunc，非空时
       --   plugin.nvim.call(browserfunc, [url]) 由本函数负责打开，
-      --   绕过 opener 的 xdg-open 路径。
+      --   绕过 opener 的默认 xdg-open 路径。
+      --
+      -- Linux + Firefox（niri）：默认 xdg-open 会复用已有 firefox 实例，
+      --   在其他 row 开新标签页并把 niri 焦点拉过去。这里强制 --new-window：
+      --   firefox 新建窗口 → niri 在当前聚焦列新增一行，不再跳转。
+      -- macOS + Safari：用 open -a Safari 打开预览页。
       vim.g.mkdp_browserfunc = "MkdpOpenBrowserNewWindow"
       vim.cmd([[
         function! MkdpOpenBrowserNewWindow(url) abort
-          if executable('firefox')
+          if has('mac')
+            " macOS：用 Safari 打开预览页
+            call jobstart(['open', '-a', 'Safari', a:url], {'detach': v:true})
+          elseif executable('firefox')
+            " Linux：firefox --new-window（niri 在当前聚焦列新开窗）
             " detach: 不随 nvim 退出而关闭；CLI 立即返回，不阻塞 nvim
             call jobstart(['firefox', '--new-window', a:url], {'detach': v:true})
           else
-            " firefox 缺失时回退到系统默认处理
+            " Linux 回退：firefox 缺失时交给系统默认浏览器
             call system('xdg-open ' . shellescape(a:url) . ' &')
           endif
         endfunction
