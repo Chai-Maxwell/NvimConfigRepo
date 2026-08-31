@@ -13,7 +13,23 @@ return {
   {
     "nvim-telescope/telescope.nvim",
     keys = {
-      { "<leader>be", function() require("telescope.builtin").buffers() end, desc = "Buffers" },
+      {
+        "<leader>be",
+        function()
+          local actions = require("telescope.actions")
+          require("telescope.builtin").buffers({
+            -- 仅在 buffers picker 内关闭选中 buffer：
+            -- 插入模式 <c-d> / 正常模式 dd
+            -- 用 attach_mappings 注入，不影响其他 picker 的 <c-d> 预览滚动
+            attach_mappings = function(_, map)
+              map("i", "<c-d>", actions.delete_buffer)
+              map("n", "dd", actions.delete_buffer)
+              return true
+            end,
+          })
+        end,
+        desc = "Buffers",
+      },
       { "<leader>ge", function() require("telescope.builtin").git_status() end, desc = "Git Status" },
       { "<leader>,", false },  -- 屏蔽 LazyVim 默认的 buffers 键位
       { "<leader>gs", false }, -- 屏蔽 LazyVim 默认的 git_status，已有 Fugitive
