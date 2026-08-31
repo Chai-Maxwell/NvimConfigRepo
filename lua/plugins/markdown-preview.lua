@@ -69,6 +69,16 @@ return {
       vim.g.mkdp_refresh_slow = 0 -- 保存文件时自动刷新预览
       vim.g.mkdp_auto_start = 0 -- 打开 .md 时不自动启动预览（按需手动 :MarkdownPreview）
 
+      -- ===== 强制浅色主题 =====
+      -- style.css 是纯浅色设计（半透明白底 + 白色卡片）。若交给系统偏好，
+      -- Linux 下 GTK 深色偏好(gtk-application-prefer-dark-theme)会让预览进入
+      -- 深色模式：rgba(255,255,255,.85) 与深色底 #181a1b 叠加成灰底 #dcdcdd，
+      -- sidenote 的灰色右边框(#cccccc)与灰底同色系，看起来像灰色外泄进卡片
+      -- 背景；macOS 系统浅色所以 Safari 没有这个问题。
+      -- 【注意】插件只认 'light'/'dark' 两个值（app/pages/index.jsx 中
+      -- ['light','dark'].includes(theme)），其他值会回落到系统偏好。
+      vim.g.mkdp_theme = "light"
+
       -- 关闭 .md 文档滚动与浏览器预览同步
       -- mkit 会合并覆盖 markdown-it 默认选项(见插件 app/pages/index.jsx)：
       -- 关闭 typographer，即 (c)→©、(r)→®、--→–、...→…、直引号→弯引号 全部不替换。
